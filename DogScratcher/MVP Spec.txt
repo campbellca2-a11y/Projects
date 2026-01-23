@@ -1,0 +1,220 @@
+Let’s not drag this out.
+**We should do all three — in the right order — in one tight pass.**
+This keeps momentum and avoids decision fatigue.
+
+Below is a **clean, execution-ready bundle** you could hand to a manufacturer *or* act on yourself.
+
+---
+
+# 1️⃣ One-Page MVP Spec (V1.0)
+
+### Product Name (Working)
+
+**Dog Scratcher™**
+(Keep it literal for now. Clever comes later.)
+
+### Purpose
+
+A self-service scratching surface that allows dogs to control pressure, location, and duration of scratching without human assistance.
+
+### Target Dog
+
+* Small to large dogs (25–90 lbs)
+* Short to medium coat (V1)
+* Especially beneficial for seniors, rescues, and mobility-limited dogs
+
+### Core Form
+
+* **Vertical scratch panel**
+* **Wall- or corner-mounted**
+* Dog rubs neck, shoulders, flank
+
+### Dimensions (V1)
+
+* Height: **18–20 in**
+* Width: **6–8 in**
+* Depth (including bristles): **1.5–2.5 in**
+
+(These tolerate variation — don’t lock microns.)
+
+### Bristle Surface
+
+* Material: **TPR rubber** or **nylon blend**
+* Stiffness: *Medium-firm* (think car interior brush, not toothbrush)
+* Rounded tips (no sharp ends)
+
+### Backing Plate
+
+* Material: **ABS or HDPE**
+* Slight flex preferred over brittle rigidity
+
+### Mounting (V1)
+
+* **Industrial adhesive strips** (3M VHB class)
+* Optional screw holes molded in (future-proofing)
+
+### Safety
+
+* No sharp edges
+* No small removable parts
+* Bite-resistant but not “chew toy” rated
+
+### Finish
+
+* Neutral color: **dark gray or black**
+* No scent
+* No moving parts
+
+### What This Is NOT
+
+* Not medical
+* Not chew-proof
+* Not adjustable (yet)
+
+---
+
+# 2️⃣ Exactly What to Order First (No Guessing)
+
+### A. Prototyping (Week 1–2)
+
+Order immediately:
+
+**1. Bristle Samples**
+
+* TPR rubber brush mats (3–4 stiffness levels)
+* Nylon bristle panels
+* Silicone bristle mats (for comparison)
+
+👉 Goal: dogs choose, not you.
+
+**2. Backing Plate Prototypes**
+
+* 3D print:
+
+  * ABS
+  * PETG
+* Flat + slight curve variants
+
+**3. Adhesives**
+
+* 3M VHB strips (2 widths)
+* Heavy-duty removable adhesive strips
+
+---
+
+### B. First Production Batch (Week 4–6)
+
+Once V1 is locked:
+
+**Quantity**
+
+* **100 units total**
+
+**Split**
+
+* 70 wall-mounted
+* 30 corner-mounted (same body, different adhesive layout)
+
+**Packaging**
+
+* Kraft box or hang-card
+* Single-color print
+* No gloss, no fluff
+
+**Insert Card**
+
+* 1 card:
+
+  * Mounting instructions
+  * Safety note
+  * “Supervise first use”
+
+---
+
+# 3️⃣ “Sell the First 100 Units Quietly” Plan
+
+This is where people usually screw it up. You won’t.
+
+### Phase 1: Soft Proof (Units 1–30)
+
+No ads. No site. No hype.
+
+Channels:
+
+* friends with dogs
+* local rescues
+* vet techs / groomers you know
+
+Ask for:
+
+* usage photos
+* 1-sentence reaction
+* durability notes
+
+Price:
+
+* **$20–25**
+* Cash / Venmo / Stripe link
+
+This is validation, not scale.
+
+---
+
+### Phase 2: Controlled Exposure (Units 31–70)
+
+Now you turn on *light visibility*.
+
+Options:
+
+* Etsy (unlisted → listed)
+* Simple Shopify page (1 product)
+* Local boutique pet shop (consignment)
+
+What you’re watching:
+
+* returns
+* mounting failures
+* “my dog ignores it” cases
+
+Ignore compliments. Fix complaints.
+
+---
+
+### Phase 3: Confidence Batch (Units 71–100)
+
+Now you know:
+
+* dogs use it
+* it doesn’t break
+* people recommend it unprompted
+
+That’s when you decide:
+
+* reorder
+* tweak
+* or pause
+
+No sunk-cost panic.
+
+---
+
+## Final, Straight Talk
+
+This is a **low-drama product** — and that’s its strength.
+
+If you say “go” today and follow this exactly:
+
+* no brand spiral
+* no over-engineering
+* no premature scaling
+
+You will hold a sellable product in your hands **inside 8 weeks**
+and you’ll *know* whether it deserves to live.
+
+If you want, next we can:
+
+* lock the final dimensions precisely
+* write the packaging copy (one paragraph)
+* or spec a V2 that adds value *without* complexity
+
+Just tell me which lever you want to pull.
