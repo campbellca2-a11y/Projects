@@ -1,0 +1,20 @@
+﻿SCRATCHER MANIFEST v1.0
+
+Baseline Files:
+- BirthCertificate_Scratcher_v1.0.md
+- DeclarationOfLife_Scratcher_v1.0.md
+- Scratcher_Mechanical_Spec_v1.0.pdf
+
+Frozen:
+- Mechanics (geometry + functional intent)
+
+Unfrozen:
+- Name / brand
+- Packaging
+- Copy
+- Finish
+
+Unfreeze Rule:
+- Manufacturing constraint OR repeated dog-response OR durability/safety findings
+- Version bump required for mechanical changes
+
