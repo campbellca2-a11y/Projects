@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mouse Distance Tracker - Perspective Capsules</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🖱️ Mouse Distance Tracker</h1>
+            <p class="subtitle">Track your mouse journey through different perspectives</p>
+        </header>
+
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-label">Total Distance</div>
+                <div class="stat-value" id="totalDistance">0 m</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Session Distance</div>
+                <div class="stat-value" id="sessionDistance">0 m</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Current Speed</div>
+                <div class="stat-value" id="currentSpeed">0 m/s</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="resetBtn" class="btn btn-warning">Reset Total</button>
+            <button id="resetSessionBtn" class="btn btn-secondary">Reset Session</button>
+        </div>
+
+        <div class="capsules-container">
+            <h2>Perspective Capsules</h2>
+            <div id="capsulesGrid"></div>
+        </div>
+
+        <footer>
+            <p>Move your mouse to start tracking! Data is saved automatically.</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
