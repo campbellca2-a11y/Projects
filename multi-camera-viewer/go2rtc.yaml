@@ -1,0 +1,28 @@
+# go2rtc configuration for multi-camera viewer
+# Documentation: https://github.com/AlexxIT/go2rtc
+
+# Stream sources - replace these with your actual RTSP URLs
+streams:
+  camera1:
+    - rtsp://username:password@192.168.1.101:554/stream1
+  camera2:
+    - rtsp://username:password@192.168.1.102:554/stream1
+  camera3:
+    - rtsp://username:password@192.168.1.103:554/stream1
+
+# Web UI and API server
+api:
+  listen: ":1984"    # Web interface at http://localhost:1984
+
+# WebRTC configuration (for lowest latency playback)
+webrtc:
+  candidates:
+    - stun:stun.l.google.com:19302
+
+# Optional: RTSP server to re-stream if needed
+rtsp:
+  listen: ":8554"
+
+# Logging
+log:
+  level: info
