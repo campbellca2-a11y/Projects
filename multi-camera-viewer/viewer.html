@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Camera Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #1a1a1a;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #fff;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .camera-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .camera-container {
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .camera-header {
+            background-color: #333;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .camera-label {
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #4ade80;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.offline {
+            background-color: #ef4444;
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 aspect ratio */
+            background-color: #000;
+        }
+
+        .video-wrapper video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .video-wrapper .error-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #888;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .controls button {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .controls button:hover {
+            background-color: #2563eb;
+        }
+
+        .settings {
+            max-width: 600px;
+            margin: 30px auto;
+            background-color: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .settings h2 {
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .settings label {
+            color: #ccc;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+
+        .settings input {
+            width: 100%;
+            padding: 8px 12px;
+            margin-bottom: 15px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            background-color: #333;
+            color: #fff;
+            font-size: 13px;
+        }
+
+        .settings input::placeholder {
+            color: #666;
+        }
+
+        /* Fullscreen support */
+        .camera-container:fullscreen .video-wrapper {
+            padding-top: 0;
+            height: 100vh;
+        }
+
+        .fullscreen-btn {
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            padding: 5px;
+            font-size: 12px;
+        }
+
+        .fullscreen-btn:hover {
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Multi-Camera Viewer</h1>
+
+    <div class="camera-grid" id="cameraGrid">
+        <!-- Camera feeds will be inserted here -->
+    </div>
+
+    <div class="controls">
+        <button onclick="refreshAll()">Refresh All Feeds</button>
+        <button onclick="toggleSettings()">Settings</button>
+    </div>
+
+    <div class="settings" id="settings" style="display: none;">
+        <h2>Configuration</h2>
+        <label for="serverUrl">go2rtc Server URL:</label>
+        <input type="text" id="serverUrl" placeholder="http://localhost:1984" value="http://localhost:1984">
+
+        <label for="camera1Name">Camera 1 Name:</label>
+        <input type="text" id="camera1Name" placeholder="Camera name in go2rtc config" value="camera1">
+
+        <label for="camera2Name">Camera 2 Name:</label>
+        <input type="text" id="camera2Name" placeholder="Camera name in go2rtc config" value="camera2">
+
+        <label for="camera3Name">Camera 3 Name:</label>
+        <input type="text" id="camera3Name" placeholder="Camera name in go2rtc config" value="camera3">
+
+        <button onclick="saveSettings()">Save & Reload</button>
+    </div>
+
+    <script>
+        // Configuration - edit these to match your go2rtc setup
+        let config = {
+            serverUrl: localStorage.getItem('serverUrl') || 'http://localhost:1984',
+            cameras: JSON.parse(localStorage.getItem('cameras') || JSON.stringify([
+                { name: 'camera1', label: 'Camera 1' },
+                { name: 'camera2', label: 'Camera 2' },
+                { name: 'camera3', label: 'Camera 3' }
+            ]))
+        };
+
+        function createCameraElement(camera, index) {
+            const container = document.createElement('div');
+            container.className = 'camera-container';
+            container.id = `camera-${index}`;
+
+            // Use MSE (Media Source Extensions) for best compatibility
+            // Alternative: WebRTC for lower latency
+            const streamUrl = `${config.serverUrl}/api/stream.mp4?src=${camera.name}`;
+
+            container.innerHTML = `
+                <div class="camera-header">
+                    <span class="camera-label">${camera.label}</span>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <button class="fullscreen-btn" onclick="toggleFullscreen(${index})">Fullscreen</button>
+                        <div class="status-indicator" id="status-${index}"></div>
+                    </div>
+                </div>
+                <div class="video-wrapper">
+                    <video id="video-${index}" autoplay muted playsinline>
+                        <source src="${streamUrl}" type="video/mp4">
+                    </video>
+                    <div class="error-message" id="error-${index}" style="display: none;">
+                        Unable to load camera feed.<br>
+                        Check that go2rtc is running.
+                    </div>
+                </div>
+            `;
+
+            return container;
+        }
+
+        function initializeCameras() {
+            const grid = document.getElementById('cameraGrid');
+            grid.innerHTML = '';
+
+            config.cameras.forEach((camera, index) => {
+                const element = createCameraElement(camera, index);
+                grid.appendChild(element);
+
+                const video = document.getElementById(`video-${index}`);
+                const status = document.getElementById(`status-${index}`);
+                const error = document.getElementById(`error-${index}`);
+
+                video.addEventListener('playing', () => {
+                    status.classList.remove('offline');
+                    error.style.display = 'none';
+                });
+
+                video.addEventListener('error', () => {
+                    status.classList.add('offline');
+                    error.style.display = 'block';
+                });
+
+                video.addEventListener('stalled', () => {
+                    status.classList.add('offline');
+                });
+
+                // Try to play
+                video.play().catch(e => {
+                    console.log(`Camera ${index} autoplay blocked:`, e);
+                });
+            });
+        }
+
+        function refreshAll() {
+            config.cameras.forEach((camera, index) => {
+                const video = document.getElementById(`video-${index}`);
+                if (video) {
+                    const currentSrc = video.querySelector('source').src;
+                    // Add timestamp to force refresh
+                    const newSrc = currentSrc.split('&t=')[0] + '&t=' + Date.now();
+                    video.querySelector('source').src = newSrc;
+                    video.load();
+                    video.play().catch(e => console.log('Play error:', e));
+                }
+            });
+        }
+
+        function toggleFullscreen(index) {
+            const container = document.getElementById(`camera-${index}`);
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                container.requestFullscreen();
+            }
+        }
+
+        function toggleSettings() {
+            const settings = document.getElementById('settings');
+            settings.style.display = settings.style.display === 'none' ? 'block' : 'none';
+
+            // Populate current values
+            document.getElementById('serverUrl').value = config.serverUrl;
+            config.cameras.forEach((cam, i) => {
+                const input = document.getElementById(`camera${i + 1}Name`);
+                if (input) input.value = cam.name;
+            });
+        }
+
+        function saveSettings() {
+            config.serverUrl = document.getElementById('serverUrl').value;
+            config.cameras = [
+                { name: document.getElementById('camera1Name').value, label: 'Camera 1' },
+                { name: document.getElementById('camera2Name').value, label: 'Camera 2' },
+                { name: document.getElementById('camera3Name').value, label: 'Camera 3' }
+            ];
+
+            localStorage.setItem('serverUrl', config.serverUrl);
+            localStorage.setItem('cameras', JSON.stringify(config.cameras));
+
+            toggleSettings();
+            initializeCameras();
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initializeCameras);
+    </script>
+</body>
+</html>
