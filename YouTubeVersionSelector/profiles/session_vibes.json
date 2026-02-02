@@ -1,0 +1,13 @@
+{
+  "name": "session_vibes",
+  "priority": ["session", "acoustic", "stripped", "tiny desk", "from the basement", "npr"],
+  "fallbacks": ["live", "official"],
+  "avoid": ["reaction", "nightcore", "sped up", "slowed", "karaoke", "cover", "remix"],
+  "channel_weights": {
+    "official_artist": 50,
+    "verified_label": 40,
+    "trusted_uploader": 35
+  },
+  "duration_tolerance_pct": 30,
+  "trusted_uploaders": []
+}
