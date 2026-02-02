@@ -1,0 +1,13 @@
+{
+  "name": "studio_purist",
+  "priority": ["official"],
+  "fallbacks": ["session", "live"],
+  "avoid": ["reaction", "nightcore", "sped up", "slowed", "remaster", "remix", "cover", "karaoke", "8d audio", "bass boosted"],
+  "channel_weights": {
+    "official_artist": 50,
+    "verified_label": 40,
+    "trusted_uploader": 20
+  },
+  "duration_tolerance_pct": 10,
+  "trusted_uploaders": []
+}

@@ -1,0 +1,13 @@
+{
+  "name": "live_energy",
+  "priority": ["live", "concert", "festival"],
+  "fallbacks": ["session", "official"],
+  "avoid": ["reaction", "nightcore", "sped up", "slowed", "karaoke", "cover"],
+  "channel_weights": {
+    "official_artist": 50,
+    "verified_label": 40,
+    "trusted_uploader": 30
+  },
+  "duration_tolerance_pct": 50,
+  "trusted_uploaders": []
+}
