@@ -20,7 +20,13 @@ def integrate_achievements(app):
     app.last_achievement_check = {}
 
     # Add achievement badge bar to dashboard
-    app._setup_achievement_ui()
+    try:
+        app._achievement_badge_bar = AchievementBadgeBar(app.dash_frame)
+        badge_frame = app._achievement_badge_bar.get_frame()
+        badge_frame.pack(fill="x", pady=(0, 10))
+        app._achievement_badge_bar.update()
+    except Exception as e:
+        print(f"[achievements_ui] badge bar setup error: {e}")
 
     # Patch the update loop to check achievements
     app._original_update_gui = app._update_gui
@@ -145,20 +151,3 @@ def _celebrate_achievement(app, achievement):
 
     except Exception as e:
         print(f"[achievements_ui] celebrate error: {e}")
-
-
-def _setup_achievement_ui(app):
-    """Add achievement UI elements to the dashboard."""
-    try:
-        # Insert achievement badge bar below the journey section
-        app._achievement_badge_bar = AchievementBadgeBar(app.dash_frame)
-        badge_frame = app._achievement_badge_bar.get_frame()
-
-        # Pack it early in the dashboard
-        badge_frame.pack(fill="x", pady=(0, 10))
-
-        # Initial update
-        app._achievement_badge_bar.update()
-
-    except Exception as e:
-        print(f"[achievements_ui] setup error: {e}")
