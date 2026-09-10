@@ -91,6 +91,8 @@ DEFAULT_SETTINGS = {
     "window_width": 520,
     "window_height": 760,
     "notifications_enabled": True,
+    "theme": "nakedladies",  # Primary theme
+    "dark_mode": False,  # Light mode by default
 }
 
 

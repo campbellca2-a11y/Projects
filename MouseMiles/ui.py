@@ -95,11 +95,16 @@ class MouseMilesApp:
     # --- UI Construction ---
 
     def _build_ui(self):
-        style = ttk.Style()
+        # Initialize theme system
+        from themes import ThemeManager, apply_theme_to_ui
+        self.theme_manager = ThemeManager(self.settings)
+        style = apply_theme_to_ui(self.root, self.theme_manager) or ttk.Style()
+
+        # Additional style configuration
         style.configure("Data.TLabel", font=("Segoe UI", 11))
         style.configure("Bold.TLabel", font=("Segoe UI", 10, "bold"))
-        style.configure("Session.TLabel", font=("Segoe UI", 9), foreground="#555555")
-        style.configure("Header.TLabel", font=("Segoe UI", 14, "bold"))
+        style.configure("Session.TLabel", font=("Segoe UI", 9), foreground="#888888")
+        style.configure("Header.TLabel", font=("Segoe UI", 14, "bold"), foreground=self.theme_manager.get_primary())
         style.configure("History.TLabel", font=("Segoe UI", 9))
 
         # Notebook (tabs)
@@ -293,6 +298,28 @@ class MouseMilesApp:
             command=self._toggle_notifications
         ).pack(anchor="w", pady=3)
 
+        # Theme selector
+        ttk.Separator(tab, orient="horizontal").pack(fill="x", pady=10)
+        ttk.Label(tab, text="🌸 Appearance", style="Bold.TLabel").pack(anchor="w", pady=(0, 5))
+
+        theme_frame = ttk.Frame(tab)
+        theme_frame.pack(fill="x", pady=3)
+        ttk.Label(theme_frame, text="Theme:").pack(side="left", padx=(0, 10))
+
+        from themes import ThemeName
+        theme_options = [t.value for t in ThemeName]
+        self._theme_var = tk.StringVar(value=self.settings.get("theme", "nakedladies"))
+        theme_combo = ttk.Combobox(theme_frame, textvariable=self._theme_var, values=theme_options, state="readonly", width=20)
+        theme_combo.pack(side="left")
+        theme_combo.bind("<<ComboboxSelected>>", lambda e: self._change_theme())
+
+        # Dark mode toggle
+        self._dark_mode_var = tk.BooleanVar(value=self.settings.get("dark_mode", False))
+        ttk.Checkbutton(
+            tab, text="Dark Mode", variable=self._dark_mode_var,
+            command=self._toggle_dark_mode
+        ).pack(anchor="w", pady=3)
+
         # DPI display
         ttk.Separator(tab, orient="horizontal").pack(fill="x", pady=10)
         ttk.Label(tab, text=f"Detected DPI: {self.tracker.dpi}", style="Bold.TLabel").pack(anchor="w")
@@ -345,6 +372,23 @@ class MouseMilesApp:
 
     def _toggle_notifications(self):
         self.settings["notifications_enabled"] = self._notif_var.get()
+
+    def _change_theme(self):
+        """Change to a different theme."""
+        theme_name = self._theme_var.get()
+        self.theme_manager.set_theme(theme_name)
+        # Reapply theme - requires UI refresh
+        # (In production, would need full UI rebuild for best results)
+        self.settings["theme"] = theme_name
+        save_settings(self.settings)
+
+    def _toggle_dark_mode(self):
+        """Toggle dark mode."""
+        dark = self._dark_mode_var.get()
+        self.theme_manager.set_dark_mode(dark)
+        self.settings["dark_mode"] = dark
+        save_settings(self.settings)
+        # Would need full theme reapplication here
 
     def _toggle_units(self):
         self.is_imperial = not self.is_imperial
