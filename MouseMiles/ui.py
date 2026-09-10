@@ -109,10 +109,16 @@ class MouseMilesApp:
         # Tab 1: Dashboard
         self._build_dashboard_tab()
 
-        # Tab 2: History
+        # Tab 2: Odometer (NEW!)
+        self._build_odometer_tab()
+
+        # Tab 3: Visualizer (NEW!)
+        self._build_visualizer_tab()
+
+        # Tab 4: History
         self._build_history_tab()
 
-        # Tab 3: Settings
+        # Tab 5: Settings
         self._build_settings_tab()
 
         # Bottom bar
@@ -191,6 +197,66 @@ class MouseMilesApp:
                 pbar.pack(fill="x", pady=(4, 0))
 
             self._dashboard_rows[name] = {"label": lbl, "pbar": pbar, "frame": row_frame}
+
+    def _build_odometer_tab(self):
+        """Tab 2: 3-Mode Odometer (Master/Recent/Trip)."""
+        tab = ttk.Frame(self.notebook, padding=10)
+        self.notebook.add(tab, text="🚗 Odometer")
+
+        try:
+            from odometer import OdometerDisplay
+            self._odometer = OdometerDisplay(tab, self.tracker, self.data, self.history)
+            self._odometer.pack(fill="both", expand=True)
+        except Exception as e:
+            ttk.Label(tab, text=f"Odometer error: {e}").pack()
+
+    def _build_visualizer_tab(self):
+        """Tab 3: Data Visualizer (Timeline + Heatmap + Stats)."""
+        tab = ttk.Frame(self.notebook, padding=10)
+        self.notebook.add(tab, text="📊 Visualizer")
+
+        try:
+            from visualizer import JourneyTimeline, ActivityHeatmap, StatsPanel
+
+            # Title
+            ttk.Label(tab, text="Your Mouse Journey Visualization", style="Header.TLabel").pack(anchor="w", pady=(0, 10))
+
+            # Scrollable container
+            canvas = tk.Canvas(tab, highlightthickness=0)
+            scrollbar = ttk.Scrollbar(tab, orient="vertical", command=canvas.yview)
+            viz_frame = ttk.Frame(canvas)
+
+            viz_frame.bind(
+                "<Configure>",
+                lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+            )
+            canvas.create_window((0, 0), window=viz_frame, anchor="nw")
+            canvas.configure(yscrollcommand=scrollbar.set)
+
+            canvas.pack(side="left", fill="both", expand=True)
+            scrollbar.pack(side="right", fill="y")
+
+            # Timeline
+            ttk.Label(viz_frame, text="Cumulative Distance", style="Bold.TLabel").pack(anchor="w", pady=(10, 5))
+            timeline = JourneyTimeline(viz_frame, self.history, self.tracker)
+            timeline.pack(fill="both", expand=True, pady=(0, 20))
+
+            # Heatmap
+            ttk.Label(viz_frame, text="Activity by Time of Day", style="Bold.TLabel").pack(anchor="w", pady=(10, 5))
+            heatmap = ActivityHeatmap(viz_frame)
+            heatmap.pack(fill="both", expand=True, pady=(0, 20))
+
+            # Stats
+            ttk.Label(viz_frame, text="Summary", style="Bold.TLabel").pack(anchor="w", pady=(10, 5))
+            stats = StatsPanel(viz_frame, self.data, self.history, self.tracker)
+            stats.pack(fill="both", expand=True)
+
+            # Store references for update
+            self._timeline = timeline
+            self._heatmap = heatmap
+
+        except Exception as e:
+            ttk.Label(tab, text=f"Visualizer error: {e}").pack()
 
     def _build_history_tab(self):
         tab = ttk.Frame(self.notebook, padding=10)
@@ -456,6 +522,20 @@ class MouseMilesApp:
             self._idle_label.config(text="(idle - mouse inactive for 5+ min)")
         else:
             self._idle_label.config(text="")
+
+        # Update odometer if available
+        if hasattr(self, '_odometer'):
+            try:
+                self._odometer.update_display(self.is_imperial)
+            except Exception:
+                pass
+
+        # Update visualizer timeline if available
+        if hasattr(self, '_timeline'):
+            try:
+                self._timeline.draw_chart()
+            except Exception:
+                pass
 
         # Schedule next
         self.root.after(GUI_REFRESH_MS, self._update_gui)
