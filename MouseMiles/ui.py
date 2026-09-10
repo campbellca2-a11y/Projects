@@ -14,12 +14,13 @@ from notifications import MilestoneTracker, make_milestone_callback
 class MouseMilesApp:
     """Main application window."""
 
-    def __init__(self, root, tracker, storage_data, daily_history, settings):
+    def __init__(self, root, tracker, storage_data, daily_history, settings, achievements_tracker=None):
         self.root = root
         self.tracker = tracker
         self.data = storage_data
         self.history = daily_history
         self.settings = settings
+        self.achievements_tracker = achievements_tracker
         self.capsules = CapsuleLibrary()
         self.is_imperial = settings.get("is_imperial", False)
 
@@ -42,6 +43,11 @@ class MouseMilesApp:
         # Build UI
         self._dashboard_rows = {}
         self._build_ui()
+
+        # Integrate achievements if available
+        if self.achievements_tracker:
+            from achievements_ui import integrate_achievements
+            integrate_achievements(self)
 
         # Start loops
         self._update_gui()
